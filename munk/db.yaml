@@ -1,0 +1,12 @@
+---
+User:
+  name:
+    type: str
+  password:
+    type: str
+Order:
+  item:
+    type: int
+  date:
+    type: datetime
+...
