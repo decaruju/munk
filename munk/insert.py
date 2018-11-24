@@ -1,8 +1,8 @@
 import json
 
 
-def insert(model_name, model, file='db.json'):
-    db = json.load(open(file, 'r'))
+def insert(model_name, model, file_name='db.json'):
+    db = json.load(open(file_name, 'r'))
     table = db['models'][model_name]
     if set(model) != set(table):
         raise ValueError
