@@ -8,4 +8,4 @@ def insert(model_name, model, file_name='db.json'):
         raise ValueError
     db['tables'][model_name][db['sequences'][model_name]] = model
     db['sequences'][model_name] += 1
-    json.dump(db, open(file, 'w'))
+    json.dump(db, open(file_name, 'w'))
