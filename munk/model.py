@@ -1,4 +1,5 @@
 from field import Field
+import json
 
 
 class Model:
@@ -7,5 +8,8 @@ class Model:
 
     def __str__(self):
         return str(self.fields)
+
+    def dict(self):
+        return {name: field.dict() for name, field in self.fields.items()}
 
     __repr__ = __str__

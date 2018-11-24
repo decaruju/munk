@@ -1,5 +1,5 @@
 import yaml
-import pickle
+import json
 from model import Model
 
 
@@ -7,7 +7,11 @@ with open('db.yaml') as file:
     data = yaml.load(file.read())
 
 
-models = {model: Model(fields) for model, fields in data.items()}
+models = {model: Model(fields).dict() for model, fields in data.items()}
 
 
-pickle.dump(models, open('db.pkl'))
+json.dump({
+    'models': models,
+    'tables': {model: {} for model in models},
+    'sequences': {model: 0 for model in models}
+}, open('db.json', 'w'))

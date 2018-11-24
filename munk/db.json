@@ -1,0 +1,1 @@
+{"models": {"User": {"name": {"type": "str"}, "password": {"type": "str"}}, "Order": {"item": {"type": "int"}, "date": {"type": "datetime"}}}, "tables": {"User": {"0": {"name": "Charles", "password": "pipo"}}, "Order": {}}, "sequences": {"User": 1, "Order": 0}}
