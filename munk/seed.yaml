@@ -1,0 +1,17 @@
+---
+User1:
+  model: User
+  name: Charles
+  password: pipo
+User2:
+  model: User
+  name: Julien
+  password: cheval
+User3:
+  model: User
+  name: Cheval
+  password: antoa
+User4:
+  model: User
+  name: Chat
+  password: 12345
