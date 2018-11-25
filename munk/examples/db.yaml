@@ -2,6 +2,7 @@
 User:
   name:
     type: str
+    index: true
   password:
     type: str
 Order:
