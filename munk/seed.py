@@ -1,11 +1,15 @@
 import yaml
-from insert import insert
+from db import DB
 
 
-with open('seed.yaml', 'r') as file:
-    db = yaml.load(file.read())
+def seed_db(seed_file_name, db_file_name):
+    with open(seed_file_name, 'r') as file:
+        seed = yaml.load(file.read())
 
-for model_name, fields in db.items():
-    model = fields['model']
-    del fields['model']
-    insert(model, fields)
+
+    db = DB(db_file_name)
+
+    for model_name, fields in seed.items():
+        model = fields['model']
+        del fields['model']
+        db.insert(model, fields)

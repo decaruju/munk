@@ -1,6 +1,8 @@
 import json
 
 
+TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, }
+
 class DB:
     def __init__(self, file_name):
         self.file_name = file_name
@@ -12,33 +14,35 @@ class DB:
         return data
 
     @db.setter
-    def db(self, rhs):
+    def db(self, db):
         with open(self.file_name, 'w') as file:
             json.dump(db, file)
 
     def insert(self, model_name, model):
         db = self.db
-        table = db['models'][model_name]
-        if set(model) != set(table):
+        if set(model) != set(db['models'][model_name]):
             raise ValueError
+        for field, value in model.items():
+            model[field] = TYPES[db['models'][model_name][field]['type']](value)
+
         db['tables'][model_name][db['sequences'][model_name]] = model
         db['sequences'][model_name] += 1
         self.db = db
 
-    def select(model_name, conditions, file_name='db.json'):
+    def find(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
         return [model for id, model in db['tables'][model_name].items() if all(model[condition] == value for condition, value in conditions.items())]
 
-    def delete(model_name, conditions, file_name='db.json'):
+    def delete(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
         db['tables'][model_name] = {id: model for id, model in db['tables'][model_name].items() if not all(model[condition] == value for condition, value in conditions.items())}
         self.db = db
 
-    def update(model_name, new_values, conditions, file_name='db.json'):
+    def update(self, model_name, new_values, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError

@@ -3,7 +3,7 @@ import json
 from model import Model
 
 
-with open('db.yaml') as file:
+with open('examples/db.yaml') as file:
     data = yaml.load(file.read())
 
 
@@ -14,4 +14,4 @@ json.dump({
     'models': models,
     'tables': {model: {} for model in models},
     'sequences': {model: 0 for model in models}
-}, open('db.json', 'w'))
+}, open('examples/db.json', 'w'))
