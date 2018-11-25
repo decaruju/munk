@@ -12,7 +12,7 @@ class DB:
         return data
 
     @db.setter
-    def db(self, rhs):
+    def db(self, db):
         with open(self.file_name, 'w') as file:
             json.dump(db, file)
 
@@ -22,23 +22,33 @@ class DB:
         if set(model) != set(table):
             raise ValueError
         db['tables'][model_name][db['sequences'][model_name]] = model
+        for field, value in model.items():
+            if db['models'][model_name][field]['index']:
+                db['indexes'][model_name][field].setdefault(value, []).append(str(db['sequences'][model_name]))
         db['sequences'][model_name] += 1
         self.db = db
 
-    def select(model_name, conditions, file_name='db.json'):
+    def select(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
-        return [model for id, model in db['tables'][model_name].items() if all(model[condition] == value for condition, value in conditions.items())]
+        ids = set(db['tables'][model_name])
+        for field, value in conditions.items():
+            if db['models'][model_name][field]['index']:
+                ids &= set(db['indexes'][model_name][field][value])
+            else:
+                ids = {id for id in ids if db['tables'][model_name][id][field] == value}
 
-    def delete(model_name, conditions, file_name='db.json'):
+        return [db['tables'][model_name][id] for id in ids]
+
+    def delete(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
         db['tables'][model_name] = {id: model for id, model in db['tables'][model_name].items() if not all(model[condition] == value for condition, value in conditions.items())}
         self.db = db
 
-    def update(model_name, new_values, conditions, file_name='db.json'):
+    def update(self, model_name, new_values, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
