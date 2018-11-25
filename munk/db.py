@@ -45,6 +45,13 @@ class DB:
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
+        for field, attrs in db['models'][model_name].items():
+            if attrs['index']:
+                for id, model in db['tables'][model_name].items():
+                    if all(model[condition] == value for condition, value in conditions.items()):
+                        db['indexes'][model_name][field][model[field]].remove(id)
+                    if len(db['indexes'][model_name][field][model[field]]) == 0:
+                        del db['indexes'][model_name][field][model[field]]
         db['tables'][model_name] = {id: model for id, model in db['tables'][model_name].items() if not all(model[condition] == value for condition, value in conditions.items())}
         self.db = db
 
@@ -56,5 +63,11 @@ class DB:
             if any(fields[condition] != value for condition, value in conditions.items()):
                 continue
             for key, value in new_values.items():
+                if db['models'][model_name][key]['index']:
+                    db['indexes'][model_name][key][fields[key]].remove(id)
+                    breakpoint()
+                    if len(db['indexes'][model_name][key][fields[key]]) == 0:
+                        del db['indexes'][model_name][key][fields[key]]
+                    db['indexes'][model_name][key].setdefault(value, []).append(id)
                 db['tables'][model_name][id][key] = value
         self.db = db
