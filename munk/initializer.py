@@ -1,6 +1,7 @@
 import yaml
 import json
-from model import Model
+
+from .model import Model
 
 
 def initialize_db(db_file_name, yaml_file_name):

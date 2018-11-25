@@ -1,5 +1,6 @@
 import yaml
-from db import DB
+
+from .db import DB
 
 
 def seed_db(seed_file_name, db_file_name):
