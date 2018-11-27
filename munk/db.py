@@ -1,6 +1,8 @@
 import json
 
 
+TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, }
+
 class DB:
     def __init__(self, file_name):
         self.file_name = file_name
@@ -18,9 +20,11 @@ class DB:
 
     def insert(self, model_name, model):
         db = self.db
-        table = db['models'][model_name]
-        if set(model) != set(table):
+        if set(model) != set(db['models'][model_name]):
             raise ValueError
+        for field, value in model.items():
+            model[field] = TYPES[db['models'][model_name][field]['type']](value)
+
         db['tables'][model_name][db['sequences'][model_name]] = model
         for field, value in model.items():
             if db['models'][model_name][field]['index']:
@@ -28,7 +32,8 @@ class DB:
         db['sequences'][model_name] += 1
         self.db = db
 
-    def select(self, model_name, conditions={}, file_name='db.json'):
+
+    def find(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
