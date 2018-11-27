@@ -23,7 +23,10 @@ def parse_query(query_string):
     params = args[2] if len(args) >= 3 else ''
 
     models = models.split('&')
-    comps = {arg.split('=')[0]: arg.split('=')[1] for arg in comps.split('&')}
+    if len(comps) > 0:
+        comps = {arg.split('=')[0]: arg.split('=')[1] for arg in comps.split('&')}
+    else:
+        comps = {}
     params = params.split('&')
 
     return models, comps, params
