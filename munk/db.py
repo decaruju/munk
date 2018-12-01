@@ -1,9 +1,10 @@
 import json
+from datetime import datetime
 
 def reference(id):
     return str(id)
 
-TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, 'reference': reference}
+TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, 'reference': reference, 'datetime': str}
 
 class DB:
     def __init__(self, file_name):
@@ -22,8 +23,8 @@ class DB:
 
     def insert(self, model_name, model):
         db = self.db
-        if set(model) != set(db['models'][model_name]):
-            raise ValueError
+        if not set(model) <= set(db['models'][model_name]):
+            raise ValueError(f'{model} and {db["models"][model_name]}')
         for field, value in model.items():
             model[field] = TYPES[db['models'][model_name][field]['type']](value)
 
@@ -34,7 +35,7 @@ class DB:
         db['sequences'][model_name] += 1
         self.db = db
 
-    def select(self, model_name, conditions={}, file_name='db.json'):
+    def select(self, model_name, conditions={}):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
@@ -46,7 +47,16 @@ class DB:
                 ids = {id for id in ids if db['tables'][model_name][id][field] == value}
         return [db['tables'][model_name][id] for id in ids]
 
-    def delete(self, model_name, conditions={}, file_name='db.json'):
+    def join(self, field_name, objects, model_name, conditions={}):
+        db = self.db
+
+        for item in objects:
+            field_model = db['models'][model_name][field_name]['to']
+            item[field_name] = {key: db['tables'][field_model][str(key)] for key in list(item[field_name])}
+        return objects
+
+
+    def delete(self, model_name, conditions={}):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
@@ -60,7 +70,7 @@ class DB:
         db['tables'][model_name] = {id: model for id, model in db['tables'][model_name].items() if not all(model[condition] == value for condition, value in conditions.items())}
         self.db = db
 
-    def update(self, model_name, new_values, conditions={}, file_name='db.json'):
+    def update(self, model_name, new_values, conditions={}):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError

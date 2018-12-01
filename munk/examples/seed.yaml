@@ -3,15 +3,28 @@ User1:
   model: User
   name: Charles
   password: pipo
+  order: 0
 User2:
   model: User
   name: Julien
   password: cheval
+  order: 0
 User3:
   model: User
   name: Cheval
   password: antoa
+  order: 1
 User4:
   model: User
   name: Chat
   password: 12345
+  order: 1
+Order1:
+  model: Order
+  item: 2
+  date: 2017-01-08 11:45:02
+Order2:
+  model: Order
+  item: 4
+  date: 2017-01-31 12:12:41
+  
