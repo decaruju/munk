@@ -32,8 +32,7 @@ class DB:
         db['sequences'][model_name] += 1
         self.db = db
 
-
-    def find(self, model_name, conditions={}, file_name='db.json'):
+    def select(self, model_name, conditions={}, file_name='db.json'):
         db = self.db
         if any(condition not in db['models'][model_name] for condition in conditions):
             raise KeyError
@@ -43,7 +42,6 @@ class DB:
                 ids &= set(db['indexes'][model_name][field][value])
             else:
                 ids = {id for id in ids if db['tables'][model_name][id][field] == value}
-
         return [db['tables'][model_name][id] for id in ids]
 
     def delete(self, model_name, conditions={}, file_name='db.json'):
