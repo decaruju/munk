@@ -1,7 +1,9 @@
 import json
 
+def reference(id):
+    return str(id)
 
-TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, }
+TYPES = {'str': str, 'int': int, 'float': float, 'bool': bool, 'reference': reference}
 
 class DB:
     def __init__(self, file_name):
