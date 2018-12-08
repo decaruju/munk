@@ -2,8 +2,12 @@
 User:
   name:
     type: str
+    index: true
   password:
     type: str
+  order:
+    type: reference
+    to: Order
 Order:
   item:
     type: int
