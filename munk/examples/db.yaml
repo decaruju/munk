@@ -3,14 +3,17 @@ User:
   name:
     type: str
     index: true
+    required: true
   password:
     type: str
+    required: true
   order:
     type: reference
     to: Order
 Order:
   item:
     type: int
+    required: true
   date:
     type: datetime
 ...
